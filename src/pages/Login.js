@@ -1,16 +1,39 @@
-import React from 'react';
+import React, { useState} from 'react';
 import { KeyboardAvoidingView, Platform, Image, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-import logo  from '../assets/logo.png';
+import api from '../services/api';
 
-export default function Login(){
+import logo from '../assets/logo.png';
+
+
+export default function Login({ navigation }){
+
+    const [user, setUser] = useState('');
+    const [password, setPassword] = useState('');
+
+    async function handleLogin(){
+        console.log(user, "---" , password);
+
+        const response = await api.post('/login', {
+            email: user,
+            password: password,
+        });
+
+        console.log(response.data);
+
+        //
+
+        navigation.navigate('Main');
+    }
+
+
     return (
         <KeyboardAvoidingView
             behavior="padding"
             enabled={Platform.OS === 'ios'}
             style={styles.container}
         >
-            
+
             <Image source={logo}/>
             <TextInput
                 autoCapitalize="none"
@@ -18,6 +41,8 @@ export default function Login(){
                 placeholder="Username"
                 placeholderTextColor="#999"
                 style={styles.input}
+                value={user}
+                onChangeText={setUser}
             />
             <TextInput
                 autoCapitalize="none"
@@ -26,8 +51,10 @@ export default function Login(){
                 placeholder="Password"
                 placeholderTextColor="#999"
                 style={styles.input2}
+                value={password}
+                onChangeText={setPassword}
             />
-            <TouchableOpacity style={styles.buttonLogin}>
+            <TouchableOpacity onPress={handleLogin} style={styles.buttonLogin}>
                 <Text style={styles.buttonTextLogin}>Sign in</Text>
             </TouchableOpacity>
 
@@ -76,7 +103,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginTop: 10,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
 
     buttonTextLogin: {
