@@ -1,5 +1,6 @@
 import React, { useState} from 'react';
 import { KeyboardAvoidingView, Platform, Image, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { API_URL } from 'react-native-dotenv';
 
 import api from '../services/api';
 
@@ -12,19 +13,23 @@ export default function Login({ navigation }){
     const [password, setPassword] = useState('');
 
     async function handleLogin(){
-        console.log(user, "---" , password);
+        //console.log(user, "---" , password);
 
-        /*
-        const response = await api.post('/login', {
+        
+        const response = await api.post(`${API_URL}/login`, {
             email: user,
             password: password,
         });
-        console.log(response.data);
-        */
+        console.log(response.data.mensagem);
+        
+        if(response.data.mensagem === "login bem sucedido"){
+            navigation.navigate('Main');
+        }
+        else{
+            console.log(`O login falhou`);
+        }
 
-        //
-
-        navigation.navigate('Main');
+        
     }
 
     function handleRegisterRoute(){

@@ -1,8 +1,10 @@
-import React, { FormData, useState } from 'react';
+import React, { useState } from 'react';
 import {View, Text, Image, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import axios from 'axios';
+import { API_URL } from 'react-native-dotenv';
 
-import uploadLogo from '../assets/upload.png'
+import uploadLogo from '../assets/upload.png';
 
 //import api from '../services/api';
 
@@ -13,6 +15,7 @@ export default function Register({ navigation }){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
+    const [plataform, setPlataform] = useState('')
 
 
     const [avatar, setAvatar] = useState(null);
@@ -26,7 +29,7 @@ export default function Register({ navigation }){
 
     async function handlePhotoUpload(){
 
-        ImagePicker.showImagePicker({noData: true, mediaType:'photo'}, (response) => {
+        await ImagePicker.showImagePicker({noData: true, mediaType:'photo'}, (response) => {
             console.log('Response = ', response);
           
             if (response.didCancel) {
@@ -40,7 +43,7 @@ export default function Register({ navigation }){
               // You can also display the image using data:
               // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-              setAvatar(response.uri)
+              setAvatar(response);
             }
           });
 
@@ -56,9 +59,55 @@ export default function Register({ navigation }){
         formdata.append('plataform', );*/
     }
 
-    function handleRegister(){
+    async function handleRegister(){
         console.log(`avatar: ${avatar}    ,   name: ${name}   ,  fortniteusername: ${user}   email: ${email}   \n
-        password1: ${password}  ,  password2: ${repeatPassword}`);
+        password1: ${password}  ,  password2: ${repeatPassword} ,  plataforma: ${plataform}`);
+
+
+        var errors = {}
+
+        if(password !== repeatPassword){
+            errors['errorPassword'] = "Diferent password";
+        }
+
+        console.log(errors);
+
+        
+        let formdata = new FormData();
+        formdata.append('file', {
+            uri: avatar.uri,
+            name: `profilePic_${user}_${avatar.fileName}`,
+            type: avatar.type,
+            timestamp: avatar.timestamp,
+            height: avatar.height,
+            width: avatar.width,
+            fileSize: avatar.fileSize,
+            path: avatar.path,
+            isVertical: avatar.isVertical,
+        });
+        formdata.append('name', name);
+        formdata.append('fortniteUsername', user);
+        formdata.append('password', password);
+        formdata.append('email', email);
+        formdata.append('plataform', plataform);
+
+        await axios({
+            method: 'post',
+            url: `${API_URL}/register`,
+            data: formdata,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+            })
+            .then(function (response) {
+                //handle success
+                console.log("----->", response);
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+            });
+
+        navigation.navigate('Login');
+            
     }
 
     return (
@@ -73,7 +122,7 @@ export default function Register({ navigation }){
             {
                 avatar && (
                     <TouchableOpacity onPress={handlePhotoUpload}>
-                        <Image source={{uri : avatar}} style={styles.avatarImage}/>
+                        <Image source={{uri : avatar.uri}} style={styles.avatarImage}/>
                     </TouchableOpacity>
                 )
             }
@@ -124,6 +173,16 @@ export default function Register({ navigation }){
                 style={styles.inputFortnitePassword}
                 value={repeatPassword}
                 onChangeText={setRepeatPassword}
+            />
+
+            <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="plataform"
+                placeholderTextColor="#999"
+                style={styles.inputName}
+                value={plataform}
+                onChangeText={setPlataform}
             />
             <TouchableOpacity onPress={handleRegister} style={styles.buttonRegister}>
                 <Text style={styles.buttonTextRegister}>Register</Text>
