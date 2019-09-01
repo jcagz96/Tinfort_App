@@ -14,16 +14,23 @@ export default function Login({ navigation }){
     async function handleLogin(){
         console.log(user, "---" , password);
 
+        /*
         const response = await api.post('/login', {
             email: user,
             password: password,
         });
-
         console.log(response.data);
+        */
 
         //
 
         navigation.navigate('Main');
+    }
+
+    function handleRegisterRoute(){
+        console.log("entrou a na função handle register");
+
+        navigation.navigate('Register');
     }
 
 
@@ -59,7 +66,7 @@ export default function Login({ navigation }){
             </TouchableOpacity>
 
 
-            <TouchableOpacity style={styles.buttonRegister}>
+            <TouchableOpacity onPress={handleRegisterRoute} style={styles.buttonRegister}>
                 <Text style={styles.buttonTextRegister}>Don't have an account. Register</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>

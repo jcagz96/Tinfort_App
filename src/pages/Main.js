@@ -1,8 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function Main(){
     return (
-        <View/>
+        <View>
+            <Text>Tela Main</Text>
+        </View>
     );
 }
