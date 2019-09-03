@@ -3,6 +3,7 @@ import {View, Text, Image, TextInput, StyleSheet, TouchableOpacity} from 'react-
 import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
 import { API_URL } from 'react-native-dotenv';
+import RadioGroup from 'react-native-radio-buttons-group';
 
 import uploadLogo from '../assets/upload.png';
 
@@ -15,10 +16,28 @@ export default function Register({ navigation }){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [plataform, setPlataform] = useState('')
-
-
     const [avatar, setAvatar] = useState(null);
+ 
+    const [estado, setEstado] = useState({
+        data: [
+            {
+                label: 'pc',
+                value: 'pc',
+            },
+            {
+                label: 'ps4',
+                value: 'ps4',
+            },
+            {
+                label: 'xb1',
+                value: 'xb1',
+            },
+        ],
+    });
+
+    function onPress(data){
+        setEstado({data});
+    }
 
 
     function handleLoginRoute(){
@@ -60,8 +79,10 @@ export default function Register({ navigation }){
     }
 
     async function handleRegister(){
+        console.log(`-------------->  ${selectedButton}`);
+
         console.log(`avatar: ${avatar}    ,   name: ${name}   ,  fortniteusername: ${user}   email: ${email}   \n
-        password1: ${password}  ,  password2: ${repeatPassword} ,  plataforma: ${plataform}`);
+        password1: ${password}  ,  password2: ${repeatPassword} ,  plataforma: ${selectedButton}`);
 
 
         var errors = {}
@@ -89,7 +110,7 @@ export default function Register({ navigation }){
         formdata.append('fortniteUsername', user);
         formdata.append('password', password);
         formdata.append('email', email);
-        formdata.append('plataform', plataform);
+        formdata.append('plataform', selectedButton);
 
         await axios({
             method: 'post',
@@ -109,6 +130,9 @@ export default function Register({ navigation }){
         navigation.navigate('Login');
             
     }
+
+    let selectedButton = estado.data.find(e => e.selected === true);
+    selectedButton = selectedButton ? selectedButton.value : estado.data[0].label;
 
     return (
 
@@ -174,16 +198,13 @@ export default function Register({ navigation }){
                 value={repeatPassword}
                 onChangeText={setRepeatPassword}
             />
+        
+            <Text style={styles.radioSectionText}>
+                Escolhe a plataforma
+            </Text>
+            <RadioGroup radioButtons={estado.data} onPress={onPress} flexDirection='row' style={styles.radioGroup}/>
+            
 
-            <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="plataform"
-                placeholderTextColor="#999"
-                style={styles.inputName}
-                value={plataform}
-                onChangeText={setPlataform}
-            />
             <TouchableOpacity onPress={handleRegister} style={styles.buttonRegister}>
                 <Text style={styles.buttonTextRegister}>Register</Text>
             </TouchableOpacity>
@@ -266,7 +287,7 @@ const styles = StyleSheet.create({
         height: 46,
         alignSelf: 'stretch',
         borderRadius: 4,
-        marginTop: 80,
+        marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -290,8 +311,13 @@ const styles = StyleSheet.create({
         borderColor: '#FFF',
         marginVertical:10,
     },
+    radioSectionText : {
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 10,
+    },
 
-
-
-
-})
+    radioButtons : {
+        marginTop: 6,
+    },
+});

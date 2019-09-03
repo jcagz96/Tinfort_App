@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
-import { KeyboardAvoidingView, Platform, Image, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, View, Platform, Image, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { API_URL } from 'react-native-dotenv';
+
 
 import api from '../services/api';
 
@@ -39,6 +40,8 @@ export default function Login({ navigation }){
     }
 
 
+
+
     return (
         <KeyboardAvoidingView
             behavior="padding"
@@ -66,6 +69,9 @@ export default function Login({ navigation }){
                 value={password}
                 onChangeText={setPassword}
             />
+
+
+
             <TouchableOpacity onPress={handleLogin} style={styles.buttonLogin}>
                 <Text style={styles.buttonTextLogin}>Sign in</Text>
             </TouchableOpacity>
