@@ -1,4 +1,5 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 import { KeyboardAvoidingView, View, Platform, Image, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { API_URL } from 'react-native-dotenv';
 
@@ -13,6 +14,15 @@ export default function Login({ navigation }){
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
+    /*
+    useEffect(() => {
+        AsyncStorage.getItem('user').then(auth_token => {
+            if(user){
+                navigation.navigate('Main', { user })
+            }
+        })
+    }, []) */
+
     async function handleLogin(){
         //console.log(user, "---" , password);
 
@@ -23,10 +33,15 @@ export default function Login({ navigation }){
         });
         console.log(response.data.mensagem);
         
-        if(response.data.mensagem === "login bem sucedido"){
-            navigation.navigate('Main');
+        if (response.data.mensagem === "login bem sucedido"){
+            console.log('========>', response.headers['auth-token'])
+
+            
+            await AsyncStorage.setItem('auth_token', response.headers['auth-token'])
+
+            navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns"});
         }
-        else{
+        else {
             console.log(`O login falhou`);
         }
 
