@@ -31,15 +31,17 @@ export default function Login({ navigation }){
             email: user,
             password: password,
         });
-        console.log(response.data.mensagem);
+        console.log(response.data.name);
         
-        if (response.data.mensagem === "login bem sucedido"){
-            console.log('========>', response.headers['auth-token'])
+        if (!response.data.error){
+            console.log('========>', response.headers['auth_token'])
 
             
-            await AsyncStorage.setItem('auth_token', response.headers['auth-token'])
+            await AsyncStorage.setItem('auth_token', response.headers['auth_token']);
+            await AsyncStorage.setItem('userId', response.data._id);
 
-            navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns"});
+
+            navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns", user : response.data._id, auth_token : response.headers['auth_token']});
         }
         else {
             console.log(`O login falhou`);
