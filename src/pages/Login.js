@@ -14,27 +14,25 @@ export default function Login({ navigation }){
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
-    /*
     useEffect(() => {
-        AsyncStorage.getItem('user').then(auth_token => {
-            if(user){
-                navigation.navigate('Main', { user })
+        async function loadLogin() {
+            const userId = await AsyncStorage.getItem('userId');
+            if(userId){
+                navigation.navigate('Main');
             }
-        })
-    }, []) */
+
+        }
+        loadLogin();
+    }, [navigation]);
 
     async function handleLogin(){
-        //console.log(user, "---" , password);
-
-        
-        const response = await api.post(`${API_URL}/login`, {
+        const response = await api.post('/login', {
             email: user,
             password: password,
         });
-        console.log(response.data.name);
+        console.log('Bem-vindo, ', response.data.name);
         
         if (!response.data.error){
-            console.log('========>', response.headers['auth_token'])
 
             
             await AsyncStorage.setItem('auth_token', response.headers['auth_token']);
@@ -46,13 +44,10 @@ export default function Login({ navigation }){
         else {
             console.log(`O login falhou`);
         }
-
-        
     }
 
     function handleRegisterRoute(){
         console.log("entrou a na função handle register");
-
         navigation.navigate('Register');
     }
 
@@ -70,7 +65,7 @@ export default function Login({ navigation }){
             <TextInput
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Username"
+                placeholder="Email"
                 placeholderTextColor="#999"
                 style={styles.input}
                 value={user}

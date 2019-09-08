@@ -8,18 +8,25 @@ import logo from '../assets/logo.png';
 import like from '../assets/like.png';
 import dislike from '../assets/dislike.png';
 
+import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
+
+
+
 
 export default function Main({ navigation }){ 
 
+    
 
     const [users, setUsers] = useState([]);
+    const [state, setState] = useState({})
+
+    
 
     /*
     useEffect(() => {
         async function loadUsers() {
             const user = await AsyncStorage.getItem('userId');
             const token = await AsyncStorage.getItem('auth_token');
-
             const response = await api.get('/players', {
                 headers: {
                     user: user,
@@ -30,6 +37,8 @@ export default function Main({ navigation }){
         }
         loadUsers();
     }, []); */
+
+
 
     async function fetchMyAPI() {
         const user = await AsyncStorage.getItem('userId');
@@ -88,36 +97,50 @@ export default function Main({ navigation }){
                     ? <Text style={styles.empty}>There's no available players</Text>
                     : (
                         users.map((user, index) => (
-                            <View key={user._id} style={[styles.card, { zIndex: users.length - index }]}>
-                            <Image style={styles.avatar} source={{uri : user.profilePicUrl}} />
+
+                            <View key={user.info._id} style={[styles.card, { zIndex: users.length - index }]}>
+                            <Image style={styles.avatar} source={{uri : user.info.profilePicUrl}} />
                             <View style={styles.footer}>
-                                <Text styles={styles.name}>
-                                    {user.name}
+                                
+                                <Text style={styles.name}>
+                                    {user.info.fortniteUsername}
                                 </Text>
-                                <Text styles={styles.plataform}>
-                                    {user.plataform}
+                                <Text style={styles.plataform}>
+                                    {user.info.plataform}
                                 </Text>
+
+                                <Table borderStyle={{borderWidth: 1}}>
+                                    <Row data={['', 'Solo', 'Duos', 'Squads']} flexArr={[1, 2, 1, 1]} style={styles.head} textStyle={styles.text}/>
+                                     <TableWrapper style={styles.wrapper}>
+                                        <Col data={['Wins', 'Games', 'Kills']} style={styles.title} heightArr={[28,28]} textStyle={styles.text}/>
+                                        <Rows data={[
+                                                        [user.stats.solo.soloWins, user.stats.duos.duosWins, user.stats.duos.duosWins],
+                                                        [user.stats.solo.soloGames, user.stats.duos.duosGames, user.stats.duos.duosGames],
+                                                        [user.stats.solo.soloKills, user.stats.duos.duosKills, user.stats.duos.duosKills],
+                                                    ]} flexArr={[2, 1, 1]} style={styles.row} textStyle={styles.text}/>
+                                    </TableWrapper>
+                                </Table>
+
+                                
                             </View>
                         </View>
                         ))
                     )
                 }
             </View>
-            <View style={styles.buttonsContainer}>
+            { users.length > 0 && (<View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={handleDislike} style={styles.button}>
                     <Image source={dislike} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleLike} style={styles.button}>
                     <Image source={like} />
                 </TouchableOpacity>
-            </View>
+            </View>)}
+            
             
         </SafeAreaView>
     );
 }
-
-
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -157,18 +180,24 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
     },
     name : {
+        alignSelf: 'center',
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
     },
     plataform : {
+        alignSelf: 'center',
         fontSize: 14,
         marginTop: 5,
         lineHeight: 18,
+        marginBottom: 4,
     },
     buttonsContainer : {
         flexDirection: 'row',
         marginBottom: 30,
+    },
+    empty: {
+        alignSelf: 'center',
     },
     button: {
         width: 50,
@@ -186,7 +215,10 @@ const styles = StyleSheet.create({
             width: 0,
             height: 2,
         }
-    }
-
-
+    },
+    head: {  height: 40,  backgroundColor: '#f1f8ff'  },
+    wrapper: { flexDirection: 'row' },
+    title: { flex: 1, backgroundColor: '#f1f8ff' },
+    row: {  height: 28  },
+    text: { textAlign: 'center' },
 })

@@ -200,7 +200,7 @@ export default function Register({ navigation }){
             />
         
             <Text style={styles.radioSectionText}>
-                Escolhe a plataforma
+                Choose a plataform
             </Text>
             <RadioGroup radioButtons={estado.data} onPress={onPress} flexDirection='row' style={styles.radioGroup}/>
             
