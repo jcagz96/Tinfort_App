@@ -21,6 +21,7 @@
     "react-native-reanimated": "^1.2.0",
     "react-native-table-component": "^1.2.1",
     "react-navigation": "^3.12.1",
+    "socket.io-client": "^2.2.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {

@@ -14,16 +14,19 @@ export default function Login({ navigation }){
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
+
     useEffect(() => {
         async function loadLogin() {
             const userId = await AsyncStorage.getItem('userId');
             if(userId){
-                navigation.navigate('Main');
+                navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns", userId : userId});
             }
 
         }
         loadLogin();
     }, [navigation]);
+
+    
 
     async function handleLogin(){
         const response = await api.post('/login', {
@@ -39,7 +42,7 @@ export default function Login({ navigation }){
             await AsyncStorage.setItem('userId', response.data._id);
 
 
-            navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns", user : response.data._id, auth_token : response.headers['auth_token']});
+            navigation.navigate('Main', { mensagem: "login bem sucedido, parabéns", userId : response.data._id, auth_token : response.headers['auth_token']});
         }
         else {
             console.log(`O login falhou`);

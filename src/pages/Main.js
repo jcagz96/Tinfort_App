@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import io from 'socket.io-client';
 import { SafeAreaView, Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+
+import { API_URL } from 'react-native-dotenv';
 
 import api from '../services/api';
 
@@ -15,30 +18,10 @@ import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-componen
 
 export default function Main({ navigation }){ 
 
-    
+    const id = navigation.getParam('userId');
 
     const [users, setUsers] = useState([]);
     const [state, setState] = useState({})
-
-    
-
-    /*
-    useEffect(() => {
-        async function loadUsers() {
-            const user = await AsyncStorage.getItem('userId');
-            const token = await AsyncStorage.getItem('auth_token');
-            const response = await api.get('/players', {
-                headers: {
-                    user: user,
-                    auth_token : token,
-                },
-        });
-            setUsers(response.data);
-        }
-        loadUsers();
-    }, []); */
-
-
 
     async function fetchMyAPI() {
         const user = await AsyncStorage.getItem('userId');
@@ -54,15 +37,29 @@ export default function Main({ navigation }){
   
       useEffect(() => {
         fetchMyAPI();
-      }, []);
+      }, [id]);
+
+
+      useEffect(() => {
+        const socket = io(`${API_URL}`, {
+            query : { user : id}
+        });
+
+        socket.on('match', player =>{
+            console.log(player);
+        })
+      }, [id]);
 
     console.log(users);
 
     async function handleLike() {
         const userId = await AsyncStorage.getItem('userId');
+        console.log('>>>>>>>>>>>>>>>>> ', userId);
+        
+
         const [ user, ...rest]  = users;                        //pick the first user and the rest
 
-        await api.post(`/players/${user._id}/likes`, null , {
+        await api.post(`/players/${user.info._id}/likes`, null , {
             headers: { user: userId},
         });
 
@@ -73,7 +70,7 @@ export default function Main({ navigation }){
         const userId = await AsyncStorage.getItem('userId');
         const [ user, ...rest]  = users;                        //pick the first user and the rest
 
-        await api.post(`/players/${user._id}/dislikes`, null , {
+        await api.post(`/players/${user.info._id}/dislikes`, null , {
             headers: { user: userId},
         });
 
