@@ -10,6 +10,7 @@ import api from '../services/api';
 import logo from '../assets/logo.png';
 import like from '../assets/like.png';
 import dislike from '../assets/dislike.png';
+import itsamatch from '../assets/itsamatch.png';
 
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 
@@ -22,6 +23,7 @@ export default function Main({ navigation }){
 
     const [users, setUsers] = useState([]);
     const [state, setState] = useState({})
+    const [matchPlayer, setMatchPlayer] = useState(null);
 
     async function fetchMyAPI() {
         const user = await AsyncStorage.getItem('userId');
@@ -46,7 +48,7 @@ export default function Main({ navigation }){
         });
 
         socket.on('match', player =>{
-            console.log(player);
+            setMatchPlayer(player);
         })
       }, [id]);
 
@@ -54,7 +56,6 @@ export default function Main({ navigation }){
 
     async function handleLike() {
         const userId = await AsyncStorage.getItem('userId');
-        console.log('>>>>>>>>>>>>>>>>> ', userId);
         
 
         const [ user, ...rest]  = users;                        //pick the first user and the rest
@@ -133,6 +134,20 @@ export default function Main({ navigation }){
                     <Image source={like} />
                 </TouchableOpacity>
             </View>)}
+
+            {matchPlayer && (
+                <View style={styles.matchContainer}>
+                    <Image style={styles.matchImage} source={itsamatch}/>
+                    <Image style={styles.matchAvatar} source={{uri : matchPlayer.profilePicUrl}}/>
+                    <Text style={styles.matchName}>{matchPlayer.fortniteUsername}</Text>
+                    <Text style={styles.matchBio}>{matchPlayer.plataform}</Text>
+
+                    <TouchableOpacity onPress={()=> setMatchPlayer(null)} style={styles.closeMatchButton}>
+                        <Text style={styles.closeMatch}>Close</Text>
+                    </TouchableOpacity>
+
+                </View>
+            )}
             
             
         </SafeAreaView>
@@ -213,9 +228,52 @@ const styles = StyleSheet.create({
             height: 2,
         }
     },
-    head: {  height: 40,  backgroundColor: '#f1f8ff'  },
+    head: {  
+        height: 40,  
+        backgroundColor: '#f1f8ff',
+    },
     wrapper: { flexDirection: 'row' },
     title: { flex: 1, backgroundColor: '#f1f8ff' },
     row: {  height: 28  },
     text: { textAlign: 'center' },
+
+    matchContainer:{
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        justifyContent:'center',
+        alignItems: 'center',
+    },
+    matchImage: {
+        height: 60,
+        resizeMode: 'contain',
+    },
+    matchAvatar: {
+        width: 160,
+        height: 160,
+        borderRadius: 80,
+        borderWidth: 5,
+        borderColor: '#FFF',
+        marginVertical: 30,
+    },
+    matchName: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#FFF',
+    },
+    matchBio: {
+        marginTop: 10,
+        fontSize: 16,
+        color: 'rgba(255,255,255, 0.8)',
+        lineHeight:24,
+        textAlign: 'center',
+        paddingHorizontal: 30,
+    },
+    closeMatch: {
+        fontSize: 16,
+        color: 'rgba(255,255,255, 0.8)',
+        textAlign: 'center',
+        marginTop: 30,
+        fontWeight: 'bold',
+    }
+    
 })
