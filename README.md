@@ -14,5 +14,6 @@ In development...
 ![Login attempt](https://github.com/jcagz96/Tinfort_App/blob/master/Readme_images/5.jpg?raw=true)
 ![Inside app screen](https://github.com/jcagz96/Tinfort_App/blob/master/Readme_images/6.jpg?raw=true)
 ![When there's no more players to like or dislike](https://github.com/jcagz96/Tinfort_App/blob/master/Readme_images/7.jpg?raw=true)
+![When players lik each other](https://github.com/jcagz96/Tinfort_App/blob/master/Readme_images/8.jpg?raw=true)
 
 ## [API backend repo](https://github.com/jcagz96/Tinfort_Backend)
