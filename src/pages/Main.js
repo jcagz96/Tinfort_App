@@ -15,15 +15,12 @@ import itsamatch from '../assets/itsamatch.png';
 import { Table, TableWrapper, Row, Rows, Col } from 'react-native-table-component';
 
 
-
-
 export default function Main({ navigation }){ 
 
     const id = navigation.getParam('userId');
 
     const [users, setUsers] = useState([]);
-    const [state, setState] = useState({})
-    const [matchPlayer, setMatchPlayer] = useState(null);
+    const [matchPlayer, setMatchPlayer] = useState(true);
 
     async function fetchMyAPI() {
         const user = await AsyncStorage.getItem('userId');
@@ -82,6 +79,12 @@ export default function Main({ navigation }){
         await AsyncStorage.clear();
 
         navigation.navigate('Login');
+    }
+
+
+    function handleChat(){
+
+        navigation.navigate('Chat');
     }
 
     return (
@@ -143,6 +146,10 @@ export default function Main({ navigation }){
                     <Text style={styles.matchBio}>{matchPlayer.plataform}</Text>
 
                     <TouchableOpacity onPress={()=> setMatchPlayer(null)} style={styles.closeMatchButton}>
+                        <Text style={styles.closeMatch}>Chat with {matchPlayer.fortniteUsername}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handleChat} style={styles.closeMatchButton}>
                         <Text style={styles.closeMatch}>Close</Text>
                     </TouchableOpacity>
 
